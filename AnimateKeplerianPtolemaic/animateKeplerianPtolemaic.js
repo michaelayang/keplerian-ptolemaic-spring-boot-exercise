@@ -287,9 +287,9 @@ angular.module('KeplerianPtolemaic', []).controller("mainController", function($
 
       });
 
-    }
+      await sleep(ANIMATION_FRAME_PERIOD_MSECS);
 
-    await sleep(ANIMATION_FRAME_PERIOD_MSECS);
+    }
 
   };
 
