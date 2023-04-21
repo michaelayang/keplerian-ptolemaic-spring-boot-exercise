@@ -10,6 +10,6 @@ import com.keplerianptolemaic.model.TruthDataRecord;
 @RepositoryRestResource
 public interface TruthDataRecordRepository extends JpaRepository<TruthDataRecord
             , Long> {
-    @Query(value = "SELECT id,  truth_angle from public.truth_data WHERE id = :id", nativeQuery = true)
+    @Query(value = "SELECT pg_sleep(0.1), id, truth_angle from public.truth_data WHERE id = :id", nativeQuery = true)
     public TruthDataRecord findTruthDataRecord(@Param("id") long id);
 }
