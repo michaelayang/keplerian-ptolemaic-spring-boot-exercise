@@ -186,6 +186,7 @@ angular.module('KeplerianPtolemaic', []).controller("mainController", function($
   var TEXT_OFFSET_Y         = 225;
   var totalPtolemaicError   = 0.0;
   var totalKeplerianError   = 0.0;
+  var TOTAL_RECORDS         = 780;
 
   async function animate() {
 
@@ -213,14 +214,22 @@ angular.module('KeplerianPtolemaic', []).controller("mainController", function($
 
         allKeplerianRecords.push(keplerianDataArray);
       }
+
+      clearCanvas();
+      canvasContext.strokeText("Finished loading allKeplerianRecords data array.  Reading individual Keplerian, Ptolemaic, and truth data records ... please standby...", 0, 25);
+
     });
+
+    while (allKeplerianRecords.length < TOTAL_RECORDS) {
+      await sleep(100);
+    }
 
     var latestIndex = 0;
 
-    for (var index = 0; index < 780; index++) {
+    for (var index = 0; index < TOTAL_RECORDS; index++) {
 
       $http.get("http://localhost:8080/getPtolemaicRecord/" + index)
-        .then(async function(ptolemaicResponse) {
+        .then(function(ptolemaicResponse) {
             var ptolemaicLine = ptolemaicResponse.data;
             var ptolemaicDataAssociativeArray = [];
             ptolemaicDataAssociativeArray = angular.fromJson(ptolemaicLine);
