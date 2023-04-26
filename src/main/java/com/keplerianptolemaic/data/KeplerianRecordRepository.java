@@ -9,9 +9,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.keplerianptolemaic.model.KeplerianRecord;
 
+
 @RepositoryRestResource
-public interface KeplerianRecordRepository extends JpaRepository<KeplerianRecord
-            , Long> {
+public interface KeplerianRecordRepository extends JpaRepository<KeplerianRecord, Long>, OrbitDataWriteRepository {
+
     @Query(value = "SELECT id, earth_x, earth_y, earth_radius, earth_theta, mars_x, mars_y, mars_radius, mars_theta from public.keplerian WHERE id = :id", nativeQuery = true)
     public KeplerianRecord findKeplerianRecord(@Param("id") long id);
     

@@ -8,8 +8,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import com.keplerianptolemaic.model.TruthDataRecord;
 
 @RepositoryRestResource
-public interface TruthDataRecordRepository extends JpaRepository<TruthDataRecord
-            , Long> {
+public interface TruthDataRecordRepository extends JpaRepository<TruthDataRecord, Long>, OrbitDataWriteRepository {
     @Query(value = "SELECT pg_sleep(0.1), id, truth_angle from public.truth_data WHERE id = :id", nativeQuery = true)
     public TruthDataRecord findTruthDataRecord(@Param("id") long id);
 }
