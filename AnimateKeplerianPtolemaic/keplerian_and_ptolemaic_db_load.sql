@@ -2,9 +2,9 @@ cd C:\Program Files\PostgreSQL\15\bin
 psql -h localhost -p 5432 -U postgres
 sudo -u postgres psql
 
-curl --verbose -H "Content-Type:  application/json" -X PUT -d '@keplerian_data_numbered.json' "http://localhost:8080/loadKeplerianRecords"
-curl --verbose -H "Content-Type:  application/json" -X PUT -d '@ptolemaic_data_numbered.json' "http://localhost:8080/loadPtolemaicRecords"
-curl --verbose -H "Content-Type:  application/json" -X PUT -d '@truth_data_numbered.json' "http://localhost:8080/loadTruthDataRecords"
+curl -u admin:password --verbose -H "Content-Type:  application/json" -X PUT -d '@keplerian_data_numbered.json' "http://localhost:8080/loadKeplerianRecords"
+curl -u admin:password --verbose -H "Content-Type:  application/json" -X PUT -d '@ptolemaic_data_numbered.json' "http://localhost:8080/loadPtolemaicRecords"
+curl -u admin:password --verbose -H "Content-Type:  application/json" -X PUT -d '@truth_data_numbered.json' "http://localhost:8080/loadTruthDataRecords"
 
 CREATE TABLE PUBLIC.PTOLEMAIC (id BIGINT PRIMARY KEY NOT NULL, first_epicycle_theta REAL NOT NULL, first_epicycle_radius REAL NOT NULL, second_epicycle_theta REAL NOT NULL, second_epicycle_radius REAL NOT NULL, third_epicycle_theta REAL NOT NULL, third_epicycle_radius REAL NOT NULL, ptolemaic_overall_angle REAL NOT NULL);
 
