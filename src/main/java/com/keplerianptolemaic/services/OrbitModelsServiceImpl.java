@@ -41,7 +41,7 @@ public class OrbitModelsServiceImpl implements OrbitModelsService {
         this.ptolemaicRecordRepository = ptolemaicRecordRepository;
         this.truthDataRecordRepository = truthDataRecordRepository;
     }
-    
+
     @Cacheable("keplerianRecords")
     @Override
     public List<KeplerianRecord> getAllKeplerianRecords() {
@@ -65,5 +65,90 @@ public class OrbitModelsServiceImpl implements OrbitModelsService {
     public TruthDataRecord getTruthDataRecord(Long id) {
         logger.info("Queried truth data record with id: {}", id);
         return truthDataRecordRepository.findTruthDataRecord(id);
+    }
+    
+    public boolean loadKeplerianRecords(List<String> data) {
+        try {
+            logger.info("Clearing old Keplerian records");
+            
+            keplerianRecordRepository.clearKeplerianRecords();
+
+            logger.info("Starting to load Keplerian records");
+
+            data.stream().forEach(line -> {
+                String[] fields = line.split(",");
+                long id = Long.valueOf(fields[0]);
+                float earthX = Float.valueOf(fields[1]);
+                float earthY = Float.valueOf(fields[2]);
+                float earthRadius = Float.valueOf(fields[3]);
+                float earthTheta = Float.valueOf(fields[4]);
+                float marsX = Float.valueOf(fields[5]);
+                float marsY = Float.valueOf(fields[6]);
+                float marsRadius = Float.valueOf(fields[7]);
+                float marsTheta = Float.valueOf(fields[8]);
+
+                keplerianRecordRepository.insertKeplerianRecord(id, earthX, earthY, earthRadius, earthTheta, marsX, marsY, marsRadius, marsTheta);
+            });
+            
+            logger.info("Finished loading Keplerian records");
+
+        } catch (NumberFormatException nfe) {
+            logger.error("Error in OrbitModelsService.loadKeplerianRecords() : {}", nfe.getMessage(), nfe);
+        }
+        return true;
+    }
+
+    public boolean loadPtolemaicRecords(List<String> data) {
+        try {
+            logger.info("Clearing old Ptolemaic records");
+
+            ptolemaicRecordRepository.clearPtolemaicRecords();
+
+            logger.info("Starting to load Ptolemaic records");
+
+            data.stream().forEach(line -> {
+                String[] fields = line.split(",");
+                long id = Long.valueOf(fields[0]);
+                float firstEpicycleTheta = Float.valueOf(fields[1]);
+                float firstEpicycleRadius = Float.valueOf(fields[2]);
+                float secondEpicycleTheta = Float.valueOf(fields[3]);
+                float secondEpicycleRadius = Float.valueOf(fields[4]);
+                float thirdEpicycleTheta = Float.valueOf(fields[5]);
+                float thirdEpicycleRadius = Float.valueOf(fields[6]);
+                float ptolemaicOverallAngle = Float.valueOf(fields[7]);
+
+                ptolemaicRecordRepository.insertPtolemaicRecord(id, firstEpicycleTheta, firstEpicycleRadius, secondEpicycleTheta, secondEpicycleRadius, thirdEpicycleTheta, thirdEpicycleRadius, ptolemaicOverallAngle);
+            });
+            
+            logger.info("Finished loading Ptolemaic records");
+
+        } catch (NumberFormatException nfe) {
+            logger.error("Error in OrbitModelsService.loadPtolemaicRecords() : {}", nfe.getMessage(), nfe);
+        }
+        return true;
+    }
+    
+    public boolean loadTruthDataRecords(List<String> data) {
+        try {
+            logger.info("Clearing old Truth Data records");
+
+            truthDataRecordRepository.clearTruthDataRecords();
+
+            logger.info("Starting to load Truth Data records");
+
+            data.stream().forEach(line -> {
+                String[] fields = line.split(",");
+                long id = Long.valueOf(fields[0]);
+                float truthAngle = Float.valueOf(fields[1]);
+
+                truthDataRecordRepository.insertTruthDataRecord(id, truthAngle);
+            });
+            
+            logger.info("Finished loading Truth Data records");
+
+        } catch (NumberFormatException nfe) {
+            logger.error("Error in OrbitModelsService.loadTruthDataRecords() : {}", nfe.getMessage(), nfe);
+        }
+        return true;
     }
 }

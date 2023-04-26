@@ -11,4 +11,7 @@ public interface OrbitModelsService {
     KeplerianRecord getKeplerianRecord(Long id);
     PtolemaicRecord getPtolemaicRecord(Long id);
     TruthDataRecord getTruthDataRecord(Long id);
+    boolean loadKeplerianRecords(List<String> data);
+    boolean loadPtolemaicRecords(List<String> data);
+    boolean loadTruthDataRecords(List<String> data);
 }
