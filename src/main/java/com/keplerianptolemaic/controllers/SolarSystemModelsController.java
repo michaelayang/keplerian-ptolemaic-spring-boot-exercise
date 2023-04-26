@@ -92,7 +92,7 @@ public class SolarSystemModelsController {
         }
     }
 
-    @RequestMapping(value = "/loadKeplerianRecords", method = RequestMethod.PUT)
+    @RequestMapping(value = "/loadKeplerianRecords", method = RequestMethod.PUT) // Note:  This endpoint is idempotent; therefore a PUT rather than a POST
     public ResponseEntity<Object> loadKeplerianRecords(@RequestBody List<String> data) {
         try {
             boolean loadSuccessful = orbitModelsService.loadKeplerianRecords(data);
@@ -105,7 +105,7 @@ public class SolarSystemModelsController {
         }
     }
 
-    @RequestMapping(value = "/loadPtolemaicRecords", method = RequestMethod.PUT)
+    @RequestMapping(value = "/loadPtolemaicRecords", method = RequestMethod.PUT) // Note:  This endpoint is idempotent; therefore a PUT rather than a POST
     public ResponseEntity<Object> loadPtolemaicRecords(@RequestBody List<String> data) {
         try {
             boolean loadSuccessful = orbitModelsService.loadPtolemaicRecords(data);
@@ -118,7 +118,7 @@ public class SolarSystemModelsController {
         }
     }
     
-    @RequestMapping(value = "/loadTruthDataRecords", method = RequestMethod.PUT)
+    @RequestMapping(value = "/loadTruthDataRecords", method = RequestMethod.PUT) // Note:  This endpoint is idempotent; therefore a PUT rather than a POST
     public ResponseEntity<Object> loadTruthDataRecords(@RequestBody List<String> data) {
         try {
             boolean loadSuccessful = orbitModelsService.loadTruthDataRecords(data);
