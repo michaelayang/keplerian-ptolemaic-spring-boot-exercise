@@ -1,5 +1,6 @@
 package com.keplerianptolemaic.services;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,9 +13,13 @@ import org.springframework.stereotype.Service;
 import com.keplerianptolemaic.data.KeplerianRecordRepository;
 import com.keplerianptolemaic.data.PtolemaicRecordRepository;
 import com.keplerianptolemaic.data.TruthDataRecordRepository;
+import com.keplerianptolemaic.model.KeplerianPredictor;
 import com.keplerianptolemaic.model.KeplerianRecord;
+import com.keplerianptolemaic.model.PtolemaicPredictor;
 import com.keplerianptolemaic.model.PtolemaicRecord;
 import com.keplerianptolemaic.model.TruthDataRecord;
+import com.keplerianptolemaic.utils.EccentricityInvalidException;
+import com.keplerianptolemaic.utils.SemiMajorAxisInvalidException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,12 +39,18 @@ public class OrbitModelsServiceImpl implements OrbitModelsService {
     @Autowired
     private TruthDataRecordRepository truthDataRecordRepository;
 
+    private PredictionContext keplerianPredictionContext;
+    private PredictionContext ptolemaicPredictionContext;
+
     public OrbitModelsServiceImpl(KeplerianRecordRepository keplerianRecordRepository,
                                   PtolemaicRecordRepository ptolemaicRecordRepository,
-                                  TruthDataRecordRepository truthDataRecordRepository) {
+                                  TruthDataRecordRepository truthDataRecordRepository) throws SemiMajorAxisInvalidException, EccentricityInvalidException{
         this.keplerianRecordRepository = keplerianRecordRepository;
         this.ptolemaicRecordRepository = ptolemaicRecordRepository;
         this.truthDataRecordRepository = truthDataRecordRepository;
+        
+        keplerianPredictionContext = new PredictionContext(new KeplerianPredictor());
+        ptolemaicPredictionContext = new PredictionContext(new PtolemaicPredictor());
     }
 
     @Cacheable("keplerianRecords")
@@ -150,5 +161,15 @@ public class OrbitModelsServiceImpl implements OrbitModelsService {
             logger.error("Error in OrbitModelsService.loadTruthDataRecords() : {}", nfe.getMessage(), nfe);
         }
         return true;
+    }
+
+    @Override
+    public double getKeplerianPredictionAngle(Date date) {
+        return Math.toDegrees(keplerianPredictionContext.getPredictionAngle(date));
+    }
+
+    @Override
+    public double getPtolemaicPredictionAngle(Date date) {
+        return Math.toDegrees(ptolemaicPredictionContext.getPredictionAngle(date));
     }
 }

@@ -1,5 +1,6 @@
 package com.keplerianptolemaic.services;
 
+import java.util.Date;
 import java.util.List;
 
 import com.keplerianptolemaic.model.KeplerianRecord;
@@ -14,4 +15,6 @@ public interface OrbitModelsService {
     boolean loadKeplerianRecords(List<String> data);
     boolean loadPtolemaicRecords(List<String> data);
     boolean loadTruthDataRecords(List<String> data);
+    double getKeplerianPredictionAngle(Date date);
+    double getPtolemaicPredictionAngle(Date date);
 }
