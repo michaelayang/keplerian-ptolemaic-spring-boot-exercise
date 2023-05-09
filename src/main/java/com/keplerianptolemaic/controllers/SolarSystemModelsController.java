@@ -1,5 +1,8 @@
 package com.keplerianptolemaic.controllers;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -127,6 +130,38 @@ public class SolarSystemModelsController {
             }
             return new ResponseEntity<Object>("Truth data load succeeded.", HttpStatus.OK);
         } catch (Exception e) {
+            return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    @RequestMapping(value = "/getKeplerianPrediction/{date}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getKeplerianPrediction(@PathVariable @NotNull String date) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            double predictionAngle = orbitModelsService.getKeplerianPredictionAngle(Date.from(LocalDate.parse(date).atStartOfDay().toInstant(ZoneOffset.UTC)));
+            String json = objectMapper.writeValueAsString(predictionAngle);
+            if (StringUtils.isNullOrEmpty(json) || "null".equalsIgnoreCase(json)) {
+                return new ResponseEntity<Object>("No Keplerian prediction returned", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<Object>(json, HttpStatus.OK);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    @RequestMapping(value = "/getPtolemaicPrediction/{date}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getPtolemaicPrediction(@PathVariable @NotNull String date) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            double predictionAngle = orbitModelsService.getPtolemaicPredictionAngle(Date.from(LocalDate.parse(date).atStartOfDay().toInstant(ZoneOffset.UTC)));
+            String json = objectMapper.writeValueAsString(predictionAngle);
+            if (StringUtils.isNullOrEmpty(json) || "null".equalsIgnoreCase(json)) {
+                return new ResponseEntity<Object>("No Ptolemaic prediction returned", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<Object>(json, HttpStatus.OK);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
             return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
