@@ -20,4 +20,13 @@ public class RestResponseEntityExceptionHandler
         return handleExceptionInternal(ex, bodyOfResponse, 
           new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
+    
+    @ExceptionHandler(value 
+            = { SemiMajorAxisInvalidException.class, EccentricityInvalidException.class })
+          protected ResponseEntity<Object> handlePredictorError(
+            RuntimeException ex, WebRequest request) {
+              String bodyOfResponse = "Error in predictor:  " + ex.getMessage();
+              return handleExceptionInternal(ex, bodyOfResponse, 
+                new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+          }
 }
