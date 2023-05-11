@@ -3,13 +3,13 @@ package com.keplerianptolemaic.model;
 public class PtolemaicPredictor implements Predictor {
 
     private static double PTOLEMAIC_ORBIT_RADIUS = 7.54676e+31;
-    private static double PTOLEMAIC_ORBIT_THETA = 2.05745;
+    private static double PTOLEMAIC_ORBIT_THETA = 2.051476;
     private static double PTOLEMAIC_ORBIT_PERIOD = 710.561;
     private static double PTOLEMAIC_EPICYCLE_RADIUS = 5.35e+31;
-    private static double PTOLEMAIC_EPICYCLE_THETA = 5.18254;
+    private static double PTOLEMAIC_EPICYCLE_THETA = 5.173851;
     private static double PTOLEMAIC_EPICYCLE_PERIOD = 371.61;
     private static double PTOLEMAIC_EPICYCLE2_RADIUS = 9.83639e+30;
-    private static double PTOLEMAIC_EPICYCLE2_THETA = 1.34445;
+    private static double PTOLEMAIC_EPICYCLE2_THETA = 1.343858;
     private static double PTOLEMAIC_EPICYCLE2_PERIOD = 4451.06;
     
     private static int EARTH_MARS_SYNODIC_PERIOD_IN_EARTH_DAYS = 780;
