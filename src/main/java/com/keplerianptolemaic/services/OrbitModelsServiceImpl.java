@@ -177,6 +177,7 @@ public class OrbitModelsServiceImpl implements OrbitModelsService {
         return coordinateTransformAzimuthToSkyCoords(ptolemaicPredictionContext.getPredictionAngle(date));
     }
     
+    @SuppressWarnings("unused")
     private double coordinateTransformAzimuthToSkyCoords(double orbitalPlaneAzimuth) {
 
         double dec0Radians = DECLINATION_DEGREES_AT_MODEL_STARTING_DATE*Math.PI/180.0;
