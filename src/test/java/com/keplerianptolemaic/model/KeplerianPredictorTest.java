@@ -17,7 +17,7 @@ import com.keplerianptolemaic.utils.SemiMajorAxisInvalidException;
 @RunWith(Parameterized.class)
 public class KeplerianPredictorTest {
 
-    private static final double ERROR_TOLERANCE_DEGREES = 5.0;
+    private static final double ERROR_TOLERANCE_DEGREES = 2.5;
     private long timeId;
     private double expectedMarsTheta;
  
