@@ -821,7 +821,7 @@ public class KeplerianPredictorTest {
     }
 
     @Test
-    public void testMarsThetaChecker() {
+    public void testKeplerianMarsThetas() {
         double normalizedExpectedMarsTheta = Math.toDegrees(MathUtils.normalizeAngle(Math.toRadians(expectedMarsTheta), 0.0));
         double normalizedKeplerianMarsTheta = Math.toDegrees(MathUtils.normalizeAngle(keplerianPredictor.getMarsTheta(timeId), 0.0));
 
