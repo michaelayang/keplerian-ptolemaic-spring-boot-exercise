@@ -7,162 +7,121 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.keplerianptolemaic.model.KeplerianRecord;
 import com.keplerianptolemaic.model.PtolemaicRecord;
 import com.keplerianptolemaic.model.TruthDataRecord;
 import com.keplerianptolemaic.services.OrbitModelsService;
 
-@Controller
+@RestController
 public class SolarSystemModelsController {
 
     @Autowired
     private OrbitModelsService orbitModelsService;
 
     @RequestMapping(value = "/getAllKeplerianRecords", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getAllKeplerianRecords() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            List<KeplerianRecord> keplerianRecords = orbitModelsService.getAllKeplerianRecords();
-            String json = objectMapper.writeValueAsString(keplerianRecords);
-            if (StringUtils.isNullOrEmpty(json) || "null".equalsIgnoreCase(json)) {
-                return new ResponseEntity<Object>("No Keplerian data returned", HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<Object>(json, HttpStatus.OK);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public List<KeplerianRecord> getAllKeplerianRecords() {
+        List<KeplerianRecord> keplerianRecords = orbitModelsService.getAllKeplerianRecords();
+        if (keplerianRecords == null || keplerianRecords.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Keplerian data returned");
         }
+        return keplerianRecords;
     }
 
     @RequestMapping(value = "/getKeplerianRecord/{id}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getKeplerianRecord(@PathVariable @NotNull Long id) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            KeplerianRecord keplerianRecord = orbitModelsService.getKeplerianRecord(id);
-            String json = objectMapper.writeValueAsString(keplerianRecord);
-            if (StringUtils.isNullOrEmpty(json) || "null".equalsIgnoreCase(json)) {
-                return new ResponseEntity<Object>("No Keplerian record returned", HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<Object>(json, HttpStatus.OK);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public KeplerianRecord getKeplerianRecord(@PathVariable @NotNull Long id) {
+        KeplerianRecord keplerianRecord = orbitModelsService.getKeplerianRecord(id);
+        if (keplerianRecord == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Keplerian record returned");
         }
+        return keplerianRecord;
     }
 
     @RequestMapping(value = "/getPtolemaicRecord/{id}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getPtolemaicRecord(@PathVariable @NotNull Long id) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            PtolemaicRecord ptolemaicRecord = orbitModelsService.getPtolemaicRecord(id);
-            String json = objectMapper.writeValueAsString(ptolemaicRecord);
-            if (StringUtils.isNullOrEmpty(json) || "null".equalsIgnoreCase(json)) {
-                return new ResponseEntity<Object>("No Ptolemaic record returned", HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<Object>(json, HttpStatus.OK);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public PtolemaicRecord getPtolemaicRecord(@PathVariable @NotNull Long id) {
+        PtolemaicRecord ptolemaicRecord = orbitModelsService.getPtolemaicRecord(id);
+        if (ptolemaicRecord == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Ptolemaic record returned");
         }
+        return ptolemaicRecord;
     }
 
     @RequestMapping(value = "/getTruthDataRecord/{id}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getTruthDataRecord(@PathVariable @NotNull Long id) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            TruthDataRecord truthDataRecord = orbitModelsService.getTruthDataRecord(id);
-            String json = objectMapper.writeValueAsString(truthDataRecord);
-            if (StringUtils.isNullOrEmpty(json) || "null".equalsIgnoreCase(json)) {
-                return new ResponseEntity<Object>("No Truth Data record returned", HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<Object>(json, HttpStatus.OK);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public TruthDataRecord getTruthDataRecord(@PathVariable @NotNull Long id) {
+        TruthDataRecord truthDataRecord = orbitModelsService.getTruthDataRecord(id);
+        if (truthDataRecord == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Truth Data record returned");
         }
+        return truthDataRecord;
     }
 
     @RequestMapping(value = "/loadKeplerianRecords", method = RequestMethod.PUT) // Note:  This endpoint is idempotent; therefore a PUT rather than a POST
-    public ResponseEntity<Object> loadKeplerianRecords(@RequestBody List<String> data) {
+    public String loadKeplerianRecords(@RequestBody List<String> data) {
         try {
             boolean loadSuccessful = orbitModelsService.loadKeplerianRecords(data);
             if (!loadSuccessful) {
-                return new ResponseEntity<Object>("Keplerian data load failed", HttpStatus.BAD_REQUEST);                
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Keplerian data load failed");                
             }
-            return new ResponseEntity<Object>("Keplerian data load succeeded.", HttpStatus.OK);
+            return "Keplerian data load succeeded.";
         } catch (Exception e) {
-            return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return e.getMessage();
         }
     }
 
     @RequestMapping(value = "/loadPtolemaicRecords", method = RequestMethod.PUT) // Note:  This endpoint is idempotent; therefore a PUT rather than a POST
-    public ResponseEntity<Object> loadPtolemaicRecords(@RequestBody List<String> data) {
+    public String loadPtolemaicRecords(@RequestBody List<String> data) {
         try {
             boolean loadSuccessful = orbitModelsService.loadPtolemaicRecords(data);
             if (!loadSuccessful) {
-                return new ResponseEntity<Object>("Ptolemaic data load failed", HttpStatus.BAD_REQUEST);              
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ptolemaic data load failed");              
             }
-            return new ResponseEntity<Object>("Ptolemaic data load succeeded.", HttpStatus.OK);
+            return "Ptolemaic data load succeeded.";
         } catch (Exception e) {
-            return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return e.getMessage();
         }
     }
     
     @RequestMapping(value = "/loadTruthDataRecords", method = RequestMethod.PUT) // Note:  This endpoint is idempotent; therefore a PUT rather than a POST
-    public ResponseEntity<Object> loadTruthDataRecords(@RequestBody List<String> data) {
+    public String loadTruthDataRecords(@RequestBody List<String> data) {
         try {
             boolean loadSuccessful = orbitModelsService.loadTruthDataRecords(data);
             if (!loadSuccessful) {
-                return new ResponseEntity<Object>("Truth data load failed", HttpStatus.BAD_REQUEST);              
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Truth data load failed");              
             }
-            return new ResponseEntity<Object>("Truth data load succeeded.", HttpStatus.OK);
+            return "Truth data load succeeded.";
         } catch (Exception e) {
-            return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return e.getMessage();
         }
     }
     
     @RequestMapping(value = "/getKeplerianPrediction/{date}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getKeplerianPrediction(@PathVariable @NotNull String date) {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public double getKeplerianPrediction(@PathVariable @NotNull String date) {
         try {
             double predictionAngle = orbitModelsService.getKeplerianPredictionAngle(Date.from(LocalDate.parse(date).atStartOfDay().toInstant(ZoneOffset.UTC)));
-            String json = objectMapper.writeValueAsString(predictionAngle);
-            if (StringUtils.isNullOrEmpty(json) || "null".equalsIgnoreCase(json)) {
-                return new ResponseEntity<Object>("No Keplerian prediction returned", HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<Object>(json, HttpStatus.OK);
-        } catch (JsonProcessingException e) {
+            return predictionAngle;
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
     
     @RequestMapping(value = "/getPtolemaicPrediction/{date}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getPtolemaicPrediction(@PathVariable @NotNull String date) {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public double getPtolemaicPrediction(@PathVariable @NotNull String date) {
         try {
             double predictionAngle = orbitModelsService.getPtolemaicPredictionAngle(Date.from(LocalDate.parse(date).atStartOfDay().toInstant(ZoneOffset.UTC)));
-            String json = objectMapper.writeValueAsString(predictionAngle);
-            if (StringUtils.isNullOrEmpty(json) || "null".equalsIgnoreCase(json)) {
-                return new ResponseEntity<Object>("No Ptolemaic prediction returned", HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<Object>(json, HttpStatus.OK);
-        } catch (JsonProcessingException e) {
+            return predictionAngle;
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 }
